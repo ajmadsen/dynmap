@@ -1,7 +1,47 @@
 package org.dynmap.fabric_1_18_0;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Pattern;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
+import org.dynmap.ConfigurationNode;
+import org.dynmap.DynmapCommonAPIListener;
+import org.dynmap.DynmapCore;
+import org.dynmap.DynmapWorld;
+import org.dynmap.Log;
+import org.dynmap.MapManager;
+import org.dynmap.PlayerList;
+import org.dynmap.common.BiomeMap;
+import org.dynmap.common.DynmapCommandSender;
+import org.dynmap.common.DynmapListenerManager;
+import org.dynmap.common.DynmapPlayer;
+import org.dynmap.fabric_1_18_0.command.DmapCommand;
+import org.dynmap.fabric_1_18_0.command.DmarkerCommand;
+import org.dynmap.fabric_1_18_0.command.DynmapCommand;
+import org.dynmap.fabric_1_18_0.command.DynmapExpCommand;
+import org.dynmap.fabric_1_18_0.event.BlockEvents;
+import org.dynmap.fabric_1_18_0.event.ChunkDataEvents;
+import org.dynmap.fabric_1_18_0.event.CustomServerLifecycleEvents;
+import org.dynmap.fabric_1_18_0.event.PlayerEvents;
+import org.dynmap.fabric_1_18_0.mixin.BiomeEffectsAccessor;
+import org.dynmap.fabric_1_18_0.mixin.ThreadedAnvilChunkStorageAccessor;
+import org.dynmap.fabric_1_18_0.permissions.FilePermissions;
+import org.dynmap.fabric_1_18_0.permissions.OpPermissions;
+import org.dynmap.fabric_1_18_0.permissions.PermissionProvider;
+import org.dynmap.permissions.PermissionsHandler;
+import org.dynmap.renderer.DynmapBlockState;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -34,32 +74,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.WorldChunk;
-import org.dynmap.*;
-import org.dynmap.common.BiomeMap;
-import org.dynmap.common.DynmapCommandSender;
-import org.dynmap.common.DynmapListenerManager;
-import org.dynmap.common.DynmapPlayer;
-import org.dynmap.fabric_1_18_0.DynmapPlugin.ChatMessage;
-import org.dynmap.fabric_1_18_0.command.DmapCommand;
-import org.dynmap.fabric_1_18_0.command.DmarkerCommand;
-import org.dynmap.fabric_1_18_0.command.DynmapCommand;
-import org.dynmap.fabric_1_18_0.command.DynmapExpCommand;
-import org.dynmap.fabric_1_18_0.event.BlockEvents;
-import org.dynmap.fabric_1_18_0.event.ChunkDataEvents;
-import org.dynmap.fabric_1_18_0.event.CustomServerLifecycleEvents;
-import org.dynmap.fabric_1_18_0.event.PlayerEvents;
-import org.dynmap.fabric_1_18_0.mixin.BiomeEffectsAccessor;
-import org.dynmap.fabric_1_18_0.mixin.ThreadedAnvilChunkStorageAccessor;
-import org.dynmap.fabric_1_18_0.permissions.FilePermissions;
-import org.dynmap.fabric_1_18_0.permissions.OpPermissions;
-import org.dynmap.fabric_1_18_0.permissions.PermissionProvider;
-import org.dynmap.permissions.PermissionsHandler;
-import org.dynmap.renderer.DynmapBlockState;
-
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.regex.Pattern;
 
 public class DynmapPlugin {
     // FIXME: Fix package-private fields after splitting is done
@@ -310,7 +324,7 @@ public class DynmapPlugin {
         }
 
         // TODO: Consider whether cheats are enabled for integrated server
-        return server.isSinglePlayer() && player.equalsIgnoreCase(server.getUserName());
+        return server.isSingleplayer() && player.equalsIgnoreCase(server.getSinglePlayerName());
     }
 
     boolean hasPerm(PlayerEntity psender, String permission) {

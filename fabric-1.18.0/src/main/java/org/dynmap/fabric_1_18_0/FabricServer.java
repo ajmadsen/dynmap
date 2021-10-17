@@ -181,7 +181,7 @@ public class FabricServer extends DynmapServerInterface {
     @Override
     public String getServerName() {
         String sn;
-        if (server.isSinglePlayer())
+        if (server.isSingleplayer())
             sn = "Integrated";
         else
             sn = server.getServerIp();
@@ -548,7 +548,7 @@ public class FabricServer extends DynmapServerInterface {
 
     @Override
     public String getServerIP() {
-        if (server.isSinglePlayer())
+        if (server.isSingleplayer())
             return "0.0.0.0";
         else
             return server.getServerIp();

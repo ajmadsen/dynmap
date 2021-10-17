@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.fabricmc', name: 'fabric-loom', version: '0.8-SNAPSHOT'
+        classpath group: 'net.fabricmc', name: 'fabric-loom', version: '0.10-SNAPSHOT'
     }
 }
 apply plugin: 'fabric-loom'
@@ -34,7 +34,6 @@ dependencies {
     compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
     shadow project(path: ':DynmapCore', configuration: 'shadow')
-
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
 }
